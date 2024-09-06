@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rifa Dinámica</title>
+    <style>
+        /* Estilos para la tabla de números */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+        h1 {
+            text-align: center;
+            color: #007BFF;
+        }
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 10px;
+            text-align: center;
+        }
+        th {
+            background-color: #007BFF;
+            color: white;
+        }
+        td.taken {
+            background-color: #dc3545;
+            color: white;
+        }
+        td.available {
+            background-color: #28a745;
+            color: white;
+            cursor: pointer;
+        }
+        .btn {
+            padding: 10px 20px;
+            color: white;
+            background-color: #007BFF;
+            border: none;
+            cursor: pointer;
+        }
+        .btn.disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Selecciona tu Número de la Rifa</h1>
+    <p>Escoge un número disponible de la siguiente lista. Los números en <strong>rojo</strong> ya han sido seleccionados.</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Número</th>
+                <th>Estado</th>
+                <th>Seleccionar</th>
+            </tr>
+        </thead>
+        <tbody id="numeros">
+            <!-- Aquí se llenarán los números dinámicamente -->
+        </tbody>
+    </table>
+
+    <div id="mensaje-seleccion"></div>
+</div>
+
+<script>
+    const totalNumeros = 100;
+    const numerosTomados = [15, 23, 45]; // Puedes actualizar esto con los números ya seleccionados desde el backend
+    const tablaNumeros = document.getElementById("numeros");
+
+    function generarTabla() {
+        for (let i = 0; i < totalNumeros; i++) {
+            let fila = document.createElement("tr");
+            let celdaNumero = document.createElement("td");
+            let celdaEstado = document.createElement("td");
+            let celdaSeleccion = document.createElement("td");
+
+            celdaNumero.textContent = i.toString().padStart(2, "0");
+
+            if (numerosTomados.includes(i)) {
+                celdaEstado.textContent = "Tomado";
+                celdaEstado.classList.add("taken");
+                celdaSeleccion.innerHTML = '<button class="btn disabled" disabled>Seleccionado</button>';
+            } else {
+                celdaEstado.textContent = "Disponible";
+                celdaEstado.classList.add("available");
+                celdaSeleccion.innerHTML = `<button class="btn" onclick="seleccionarNumero(${i})">Seleccionar</button>`;
+            }
+
+            fila.appendChild(celdaNumero);
+            fila.appendChild(celdaEstado);
+            fila.appendChild(celdaSeleccion);
+            tablaNumeros.appendChild(fila);
+        }
+    }
+
+    function seleccionarNumero(numero) {
+        if (!numerosTomados.includes(numero)) {
+            numerosTomados.push(numero);
+            document.getElementById("mensaje-seleccion").innerHTML = `<p>Has seleccionado el número: <strong>${numero.toString().padStart(2, "0")}</strong></p>`;
+            tablaNumeros.innerHTML = "";
+            generarTabla();
+            // Enviar número al backend para procesar el pago
+            // Aquí podrías redirigir a la página de pago con un enlace generado por el backend
+        }
+    }
+
+    generarTabla();
+</script>
+
+</body>
+</html>
